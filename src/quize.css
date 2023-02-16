@@ -1,0 +1,39 @@
+body {
+  color: #293264;
+}
+.choose {
+  color: #4d5b9e;
+  border-radius: 1em;
+  height: 3em;
+  border: solid 0.79px #4d5b9e;
+  /* box-shadow: 0 2px 2px lightslategray; */
+  padding: 0 2em;
+  margin: 1em;
+  background: transparent;
+}
+.start {
+  border: 2px solid red;
+  text-align: center;
+  margin: 15em auto;
+  color: #293264;
+}
+p {
+  font-weight: bold;
+}
+.startBtn {
+  border: none;
+  border-radius: 0.5em;
+  padding: 0.75em 2em;
+  background-color: #4d5b9e;
+  color: white;
+  font-size: 1.5rem;
+}
+
+/***********************/
+.question-container {
+  border: 2px solid red;
+  padding: 6em;
+}
+.checkAns {
+  text-align: center;
+}
