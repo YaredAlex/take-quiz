@@ -1,11 +1,15 @@
 import React from "react";
 import "./quize.css";
+import swal from "sweetalert";
 export default function Quize() {
   const [quize, setQuize] = React.useState([]);
   const [startQuize, setStartQuize] = React.useState(false);
   const [answers, setAnswers] = React.useState([]);
   const [showResult, setShowResult] = React.useState(false);
   const [result, setResult] = React.useState(0);
+  const [selected,setSelected] = React.useState([]);
+  const [totalSelected,setTotalSelected] = React.useState(0);
+  const [totalQuestion,setTotalQuestion] = React.useState(0);
   const userAnswer = new Array(10).fill("");
 
   React.useEffect(() => {
@@ -25,10 +29,12 @@ export default function Quize() {
         let incorrectAnswer = [];
         const correctAns = [];
         let index = 0;
-        const quizes = data.results.map((quize) => {
+        let tmpselected = []
+         data.results.forEach((quize) => {
           incorrectAnswer = [];
           incorrectAnswer.push(quize.correct_answer);
           incorrectAnswer.push(quize.incorrect_answers);
+          selected.push(0);
           //****----This loop is for randomizing answer
           //****---if this loop is not written every answer will be choice A
           for (let i = 0; i < incorrectAnswer.length; i++) {
@@ -38,7 +44,6 @@ export default function Quize() {
             incorrectAnswer[rand] = temp;
           }
           //--End of randomizing
-
           correctAns.push(quize.correct_answer);
           // incorrectAnswer.push({isSelected:false})
           collQuize.push({
@@ -49,15 +54,19 @@ export default function Quize() {
           });
         });
         setQuize([]);
+        setSelected(tmpselected)
         setQuize(collQuize);
         setAnswers(correctAns);
+        setTotalSelected(0);
+        setTotalQuestion(index);
       });
   }
-  function selectedAnswer() {}
-  //let btnColor=false
-
   //---------------------------To handle Button click----------------//
-  const handleClick = (event, index) => {
+  const selectAnswer = (event, index) => {
+    if(selected[index]!==1){
+        selected[index] = 1;
+        setTotalSelected(c=> c +=1)
+    }
     let result = document.querySelectorAll(`.q${index}`); //select every button that contains the same class
     result.forEach(function (element) {
       element.style.backgroundColor = ""; //sets background color to empty string
@@ -68,18 +77,16 @@ export default function Quize() {
 
   //--------------------------------To handle submited answers(submition) --------------------//
   const checkAnswer = () => {
+    if(totalSelected!==totalQuestion){
+      swal("Select All","Please select all questions","warning")
+      return;
+    }
     let count = 0; //counting correct answers
-
-    userAnswer.forEach(function (
-      element,
-      index //looping through useranswer to check if it is correct
-    ) {
-      //selecting all buttons according to their class //
+    userAnswer.forEach(function ( element,index ) {
       let q = document.querySelectorAll(`.q${index + 1}`);
-      let a; //variable to be set when background color is found
+      let a;
       q.forEach(function (element) {
         if (element.style.backgroundColor !== "") {
-          //checking background color why? long answer
           a = element;
         }
         if (element.innerHTML === answers.at(index)) {
@@ -91,7 +98,6 @@ export default function Quize() {
       function check() {
         if (a instanceof Element)
           if (answers.at(index).localeCompare(a.innerHTML) !== 0) {
-            //checking if a is instance of DOM object else if given headace
             //check if they are not equal!
             a.style.backgroundColor = "rgba(217, 83, 79,0.4)";
           } else count++; //count they are equal increment count
@@ -105,11 +111,6 @@ export default function Quize() {
 
   //----------------------Generating Quize-------------------------//
   function generateQuizeHtml() {
-    //btnColor=false
-    // const Style={
-    //     backgroundColor: {btnColor} ? 'green' :''
-    //}
-
     return quize.map((quize, index) => (
       <div className="quize-question" key={index}>
         <h3>
@@ -117,9 +118,9 @@ export default function Quize() {
         </h3>
         {quize.incorrectAnswer.map((ans, index) => (
           <button
-            onClick={(event) => handleClick(event, quize.questionId)} //passing event will help to identify which button is clicked
+            onClick={(event) => selectAnswer(event, quize.questionId)} //passing event will help to identify which button is clicked
             // style={{ backgroundColor: { btnColor } === true ? "#D6DBF5" : "" }}// this is bad because it affect all buttons
-            className={`choose btn q${quize.questionId}`} //this is very important with out this 'q${quize.questionId}' i can't group the answers accordingly
+            className={`choose btn q${quize.questionId}`} //this is very important with out this 'q${quize.questionId}
             key={index}
           >
             {ans}
@@ -128,15 +129,6 @@ export default function Quize() {
       </div>
     ));
   }
-  //finaly because this is limted time this is what i can do
-  //there are some thing need should be done
-  //like
-  //1. user must select answer (forcing user to select answer)
-  //2. after submiting you can change your answer which is bad you will see this because it is not coloring the corect answer
-  //3. some of the answer contain special character (very not good to compare)
-  //4. quize.js is becoming big file which is very very bad it should be break down to components
-  //5. last but not least it is good
-  //Time is our enemy this is what i can do rest is depend on you
   return (
     <>
       {startQuize ? (
@@ -156,13 +148,13 @@ export default function Quize() {
                 onClick={() => {
                   setShowResult(false);
                   setStartQuize(!startQuize);
-                  prepareQuestion(); //my guss my be my be not
+                  prepareQuestion();
                 }}
               >
                 {"Play Again"}
               </button>
             ) : (
-              <button className="startBtn " onClick={checkAnswer}>
+              <button className="startBtn " onClick={()=>checkAnswer()}>
                 {"Check answers"}
               </button>
             )}
@@ -170,13 +162,12 @@ export default function Quize() {
         </div>
       ) : (
         <div className="start">
-          <h1>Quizzical </h1>
+          <h1>Quizzone</h1>
           <p>Test Your General Knowledge let's start!</p>
           <button
             className="startBtn btn"
             onClick={() => setStartQuize(!startQuize)}
           >
-            {" "}
             Start quiz
           </button>
         </div>
