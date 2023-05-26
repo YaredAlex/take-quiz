@@ -4,7 +4,7 @@ body {
 .choose {
   color: #4d5b9e;
   border-radius: 1em;
-  height: 3em;
+  min-height: 3em;
   border: solid 0.79px #4d5b9e;
   /* box-shadow: 0 2px 2px lightslategray; */
   padding: 0 2em;
@@ -12,7 +12,6 @@ body {
   background: transparent;
 }
 .start {
-  border: 2px solid red;
   text-align: center;
   margin: 15em auto;
   color: #293264;
@@ -36,4 +35,9 @@ p {
 }
 .checkAns {
   text-align: center;
+}
+@media screen and (max-width:500px) {
+  .question-container {
+    padding: 1em;
+  }
 }
